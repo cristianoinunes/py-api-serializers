@@ -1,28 +1,5 @@
 from rest_framework import serializers
-from .models import Genre, Actor, CinemaHall, Movie, MovieSession
-
-
-class GenreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Genre
-        fields = ["id", "name"]
-
-
-class ActorSerializer(serializers.ModelSerializer):
-    full_name = serializers.CharField(source="__str__", read_only=True)
-
-    class Meta:
-        model = Actor
-        fields = ["id", "first_name", "last_name", "full_name"]
-
-
-class CinemaHallSerializer(serializers.ModelSerializer):
-    capacity = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = CinemaHall
-        fields = ["id", "name", "rows",
-                  "seats_in_row", "capacity"]
+from .models import Movie, Genre, Actor, MovieSession, CinemaHall
 
 
 class MovieSerializer(serializers.ModelSerializer):
@@ -30,6 +7,15 @@ class MovieSerializer(serializers.ModelSerializer):
         slug_field="name", queryset=Genre.objects.all(), many=True)
     actors = serializers.SlugRelatedField(
         slug_field="__str__", queryset=Actor.objects.all(), many=True)
+
+    class Meta:
+        model = Movie
+        fields = ["id", "title", "description", "duration", "genres", "actors"]
+
+
+class MovieDetailSerializer(serializers.ModelSerializer):
+    genres = serializers.StringRelatedField(many=True)
+    actors = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Movie
@@ -46,5 +32,15 @@ class MovieSessionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MovieSession
-        fields = ["id", "show_time", "movie_title",
-                  "cinema_hall_name", "cinema_hall_capacity"]
+        fields = ["id", "show_time",
+                  "movie_title", "cinema_hall_name",
+                  "cinema_hall_capacity"]
+
+
+class MovieSessionDetailSerializer(serializers.ModelSerializer):
+    movie = MovieDetailSerializer(read_only=True)
+    cinema_hall = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = MovieSession
+        fields = ["id", "show_time", "movie", "cinema_hall"]
