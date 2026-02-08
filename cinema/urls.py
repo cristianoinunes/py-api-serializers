@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import GenreViewSet, ActorViewSet, CinemaHallViewSet, MovieViewSet, MovieSessionViewSet
+from .views import (GenreViewSet, ActorViewSet,
+                    CinemaHallViewSet, MovieViewSet, MovieSessionViewSet)
 
 router = DefaultRouter()
 router.register(r"genres", GenreViewSet)
@@ -12,4 +13,3 @@ router.register(r"movie_sessions", MovieSessionViewSet)
 urlpatterns = [
     path("api/cinema/", include(router.urls)),
 ]
-
